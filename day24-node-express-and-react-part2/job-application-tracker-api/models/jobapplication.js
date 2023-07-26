@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsToMany(models.Tag, {
         through: "JobApplicationTag",
       });
+      this.hasMany(models.Note);
     }
   }
   JobApplication.init(
@@ -14,10 +15,22 @@ module.exports = (sequelize, DataTypes) => {
       company: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Company can't be blank",
+            args: true,
+          },
+        },
       },
       title: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Job title can't be blank",
+            args: true,
+          },
+        },
       },
       minSalary: DataTypes.INTEGER,
       maxSalary: {
@@ -37,6 +50,10 @@ module.exports = (sequelize, DataTypes) => {
       location: DataTypes.STRING,
       postDate: {
         type: DataTypes.DATE,
+        allowNull: true,
+        set(value) {
+          this.setDataValue("postDate", value === "" ? null : value);
+        },
         validate: {
           isDate: true,
           isPast(value) {
@@ -49,6 +66,10 @@ module.exports = (sequelize, DataTypes) => {
       jobPostUrl: DataTypes.STRING,
       applicationDate: {
         type: DataTypes.DATE,
+        allowNull: true,
+        set(value) {
+          this.setDataValue("applicationDate", value === "" ? null : value);
+        },
         validate: {
           isDate: true,
           isAfterPostDate(value) {
@@ -62,6 +83,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       lastContactDate: {
         type: DataTypes.DATE,
+        allowNull: true,
+        set(value) {
+          this.setDataValue("lastContactDate", value === "" ? null : value);
+        },
         validate: {
           isDate: true,
           isPast(value) {
